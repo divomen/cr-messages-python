@@ -6,7 +6,6 @@ import math
 from coc.hexdump import hexdump
 
 
-
 class CoCMessageDecoder:
     lengthTypes = ['BYTE', 'INT', 'RRSINT32']
     _bitfield = None
@@ -35,11 +34,13 @@ class CoCMessageDecoder:
             reader = CoCMessageReader(messageid, unknown, payload)
             if "fields" in self._definitions[messageid]:
                 decoded = {
+                    "id": messageid,
                     "name": self._definitions[messageid]["name"],
                     "fields": self._decode_fields(reader, self._definitions[messageid]["fields"])
                 }
             else:
                 decoded = {
+                    "id": messageid,
                     "name": self._definitions[messageid]["name"]
                 }
 
@@ -151,7 +152,8 @@ class CoCMessageDecoder:
             if "extensions" in self._definitions["component"][type]:
                 if not decoded["id"] in self._definitions["component"][type]["extensions"]:
                     raise NotImplementedError("{}(id={}) has not yet been implemented.".format(type, decoded["id"]))
-                decoded["payload"] = self._decode_fields(reader, self._definitions["component"][type]["extensions"][decoded["id"]]["fields"])
+                decoded["payload"] = self._decode_fields(reader, self._definitions["component"][type]["extensions"][
+                    decoded["id"]]["fields"])
             self.dump(decoded)
             return decoded
         else:
@@ -161,10 +163,11 @@ class CoCMessageDecoder:
         if "name" not in decoded:
             decoded["name"] = "unknownName"
 
-        if "fields" in decoded:
-            print("{}: {}".format(decoded["name"], json.dumps(self.stringify(decoded["fields"], hide_unknown), indent=2)))
-        else:
-            print("{}: {{}}".format(decoded["name"]))
+        print("(1){}({}): {}".format(
+            decoded["name"],
+            decoded["id"],
+            json.dumps(self.stringify(decoded["fields"], hide_unknown), indent=2) if "fields" in decoded else ""
+        ))
 
     def stringify(self, decoded, hide_unknown=False):
         stringified = type(decoded)()
