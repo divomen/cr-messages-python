@@ -163,10 +163,10 @@ class CoCMessageDecoder:
         if "name" not in decoded:
             decoded["name"] = "unknownName"
 
-        print("(1){}({}): {}".format(
+        print("{} ({}): {}".format(
             decoded["name"],
             decoded["id"],
-            json.dumps(self.stringify(decoded["fields"], hide_unknown), indent=2) if "fields" in decoded else ""
+            json.dumps(self.stringify(decoded["fields"], hide_unknown), indent=2) if "fields" in decoded else "{}"
         ))
 
     def stringify(self, decoded, hide_unknown=False):
